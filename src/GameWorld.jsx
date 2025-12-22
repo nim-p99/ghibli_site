@@ -39,7 +39,7 @@ function Lampost({ movie }) {
       {/* light source */}
       <pointLight
         position={[-1,9.5,0.5]}
-        intensity={8}
+        intensity={7}
         distance={10}
         color="#fff4d1"
       />
@@ -58,7 +58,7 @@ function Lampost({ movie }) {
 // helper to load multiple images in a loop 
 function PosterMaterial({ url }) {
   const texture = useTexture(url);
-  return <meshStandardMaterial map={texture} side={2} />;
+  return <meshStandardMaterial map={texture} side={2} emissive={"#ffffff"} emissiveIntensity={0.1} />;
 }
 
 
