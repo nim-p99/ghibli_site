@@ -1,14 +1,15 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, Suspense, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Html, useGLTF } from '@react-three/drei';
+import { Html, useGLTF, useTexture, Clone } from '@react-three/drei';
+import * as THREE from 'three';
 
 
 const MOVIE_DATA = [
-  { id: 0, title: "Spirited Away", year: "2001", description: "A young girl wanders into a spirit world", x:10, color: "gold" },
-  { id: 1, title: "My Neighbour Totoro", year: "1988", description: "Two sisters befriend forest spirits.", x:30, color: "green" },
+  { id: 0, title: "Spirited Away", year: "2001", description: "A young girl wanders into a spirit world", x:20, posterUrl: "/spirited-away.jpg", color: "gold" },
+  { id: 1, title: "My Neighbour Totoro", year: "1988", description: "Two sisters befriend forest spirits.", x:45, posterUrl: "/totoro.jpg", color: "green" },
 ];
 //const LOOP_DISTANCE = 500;
-const LOOP_DISTANCE = 40;
+const LOOP_DISTANCE = 65;
 
 
 function TrainModel() {
@@ -25,23 +26,62 @@ function TrainModel() {
   );
 }
 
+function Lampost({ movie }) {
+  const { scene } = useGLTF('/street-lamp.glb');
+  // clone so each lampost can exist independently
+  const clonedScene = scene.clone();
+
+  return (
+    <group position={[movie.x, -5.2, -14]}>
+      {/* 3d model */}
+      <primitive object={clonedScene} scale={0.25} />
+
+      {/* light source */}
+      <pointLight
+        position={[-1,9.5,0.5]}
+        intensity={8}
+        distance={10}
+        color="#fff4d1"
+      />
+
+      {/* the movie poster */}
+      <mesh position={[0,7,0.2]}>
+        <planeGeometry args={[3,4.5]} />
+        <Suspense fallback={<meshStandardMaterial color="gray" />}>
+          <PosterMaterial url={movie.posterUrl} />
+        </Suspense>
+      </mesh>
+    </group>
+  );
+}
+
+// helper to load multiple images in a loop 
+function PosterMaterial({ url }) {
+  const texture = useTexture(url);
+  return <meshStandardMaterial map={texture} side={2} />;
+}
+
+
 function WorldContent() {
   return (
     <>
       {/* floor */}
       <mesh rotation={[-Math.PI/2, 0,0]} position={[0,-3,0]}>
-        <planeGeometry args={[40,10]} />
+        <planeGeometry args={[65,10]} />
         <meshPhysicalMaterial color='#2e5a88' transparent opacity={0.9} transmission={1} roughness={0.2}/>
       </mesh>
 
       {/* marker */}
-      {MOVIE_DATA.map(movie => (
-        <group key={movie.id} position={[movie.x, 1.5, -3]}>
-          <mesh>
-            <sphereGeometry args={[0.5]} />
-            <meshStandardMaterial color={movie.color} />
-          </mesh>
-        </group>
+      {/* {MOVIE_DATA.map(movie => ( */}
+      {/*   <group key={movie.id} position={[movie.x, 1.5, -3]}> */}
+      {/*     <mesh> */}
+      {/*       <sphereGeometry args={[0.5]} /> */}
+      {/*       <meshStandardMaterial color={movie.color} /> */}
+      {/*     </mesh> */}
+      {/*   </group> */}
+      {/* ))} */}
+      {MOVIE_DATA.map((movie) => (
+        <Lampost key={movie.id} movie={movie} />
       ))}
     </>
   );
