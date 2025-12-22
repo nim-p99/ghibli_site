@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState, Suspense, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Html, useGLTF, useTexture, Clone } from '@react-three/drei';
+import { Html, useGLTF, useTexture, Clone, MeshReflectorMaterial } from '@react-three/drei';
 import * as THREE from 'three';
 
 
@@ -30,6 +30,7 @@ function Lampost({ movie }) {
   const { scene } = useGLTF('/street-lamp.glb');
   // clone so each lampost can exist independently
   const clonedScene = scene.clone();
+  const lampColor = "#ffcc80";
 
   return (
     <group position={[movie.x, -5.2, -14]}>
@@ -41,7 +42,7 @@ function Lampost({ movie }) {
         position={[-1,9.5,0.5]}
         intensity={7}
         distance={10}
-        color="#fff4d1"
+        color={lampColor}
       />
 
       {/* the movie poster */}
@@ -62,24 +63,39 @@ function PosterMaterial({ url }) {
 }
 
 
-function WorldContent() {
+function WorldContent({ maps }) {
+  const { normalMap, roughnessMap, aoMap } = maps;
+
   return (
     <>
       {/* floor */}
-      <mesh rotation={[-Math.PI/2, 0,0]} position={[0,-3,0]}>
-        <planeGeometry args={[65,10]} />
-        <meshPhysicalMaterial color='#2e5a88' transparent opacity={0.9} transmission={1} roughness={0.2}/>
+      {/* <mesh rotation={[-Math.PI/2, 0,0]} position={[0,-3,0]}> */}
+      {/*   <planeGeometry args={[65,10]} /> */}
+      {/*   <meshPhysicalMaterial color='#2e5a88' transparent opacity={0.9} transmission={1} roughness={0.2}/> */}
+      {/* </mesh> */}
+      <mesh rotation={[-Math.PI/2,0,0]} position={[0,-5,0]}>
+        <planeGeometry args={[70,40]} />
+        <MeshReflectorMaterial
+          normalMap={normalMap}
+          normalScale={[0.15,0.15]} // ripple depth 
+          roughnessMap={roughnessMap}
+          aoMap={aoMap}
+          blur={[300,100]} // width, height
+          resolution={1024}
+          mixBlur={0.7}
+          mixStrength={50} //strength of reflection
+          roughness={0.8} //hgiher roughness looks more like water than mirror
+          depthScale={1}
+          minDepthThreshold={0.7}
+          maxDepthThreshold={1.2}
+          color="#102030"
+          metalness={0.7}
+          mirror={1}
+          transparent
+          opacity={0.9}
+        />
       </mesh>
 
-      {/* marker */}
-      {/* {MOVIE_DATA.map(movie => ( */}
-      {/*   <group key={movie.id} position={[movie.x, 1.5, -3]}> */}
-      {/*     <mesh> */}
-      {/*       <sphereGeometry args={[0.5]} /> */}
-      {/*       <meshStandardMaterial color={movie.color} /> */}
-      {/*     </mesh> */}
-      {/*   </group> */}
-      {/* ))} */}
       {MOVIE_DATA.map((movie) => (
         <Lampost key={movie.id} movie={movie} />
       ))}
@@ -96,6 +112,20 @@ export default function GameWorld({ soundRef }) {
   // similar to python variables
   const speed = useRef(0);
   const distance = useRef(0);
+
+  // water maps 
+  const [normalMap, roughnessMap, aoMap] = useTexture([
+    '/water_norm.jpg',
+    '/water_rough.jpg',
+    '/water_occ.jpg'
+  ]);
+
+  useMemo(() => {
+    [normalMap, roughnessMap, aoMap].forEach((map) => {
+      map.wrapS = map.wrapT = THREE.RepeatWrapping;
+      map.repeat.set(8, 4);
+    });
+  }, [normalMap, roughnessMap, aoMap]);
 
   // state to track which movie we are next to 
   const [nearbyMovie, setNearbyMovie] = useState(null);
@@ -157,7 +187,16 @@ export default function GameWorld({ soundRef }) {
     // rotate lighting environment
     state.scene.environmentRotation.y = distance.current * 0.005;
 
+    // ripple effect as train moves through water
+    const flowSpeed = distance.current * 0.1;
+    if (normalMap) {
+      normalMap.offset.x = flowSpeed;
+      roughnessMap.offset.x = flowSpeed;
+      aoMap.offset.x = flowSpeed;
 
+      // tiny y drift
+      normalMap.offset.y += delta * 0.02;
+    }
 
     // proximity - find a movie where distance is < 2 units away 
     const found = MOVIE_DATA.find(m => Math.abs(m.x - wrappedDist) < 2);
@@ -217,14 +256,14 @@ export default function GameWorld({ soundRef }) {
       <TrainModel />  
       {/* the world (floorRef) */}
       <group ref={floorRef}>
-        <WorldContent />
+        <WorldContent maps={{ normalMap, roughnessMap, aoMap }}/>
 
         <group position={[LOOP_DISTANCE, 0,0]}>
-          <WorldContent />
+          <WorldContent maps={{ normalMap, roughnessMap, aoMap }}/>
         </group>
 
         <group position={[-LOOP_DISTANCE,0,0]}>
-          <WorldContent />
+          <WorldContent maps={{ normalMap, roughnessMap, aoMap }}/>
         </group>
       </group>
     </>

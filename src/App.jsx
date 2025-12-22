@@ -29,7 +29,8 @@ export default function App() {
       />
       {/* Canvas sets up renderer, scene and camera */}
       <Canvas camera={{position: [0,0.5,10], fov:50}}>
-        <fog attach="fog" args={['#C2C6D5', 21, 50]} />
+        <fog attach="fog" args={['#1a2a3a', 15, 60]} />
+        <hemisphereLight intesity={0.5} color="#a9cce3" groundColor="#0f172a" />
         <Suspense fallback={null}>
           <Environment files="/sky.hdr" background />
           <GameWorld soundRef={soundRef}/>
