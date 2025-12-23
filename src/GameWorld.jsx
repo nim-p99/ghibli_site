@@ -252,7 +252,7 @@ export default function GameWorld({ soundRef }) {
      
       {/* sea */}
       <mesh rotation={[-Math.PI/2,0,0]} position={[0,-5,0]}>
-        <planeGeometry args={[LOOP_DISTANCE + 0.5,40]} />
+        <planeGeometry args={[LOOP_DISTANCE + 15,40]} />
         <MeshReflectorMaterial
           normalMap={normalMap}
           normalScale={[0.6,0.6]} // ripple depth 

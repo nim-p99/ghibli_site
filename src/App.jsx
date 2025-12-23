@@ -38,10 +38,8 @@ export default function App() {
   // texture.mapping = THREE.EquirectangularReflectionMapping;
   // texture.offset.y = 10;
   const texture = useLoader(THREE.TextureLoader, '/sky2.png');
-
   useMemo(() => {
     texture.mapping = THREE.EquirectangularReflectionMapping;
-    texture.offset.y = -0.8;
     texture.wrapT = THREE.RepeatWrapping;
   }, [texture]);
 
@@ -64,12 +62,12 @@ export default function App() {
         }}
       />
       {/* Canvas sets up renderer, scene and camera */}
-      <Canvas camera={{position: [0,0,25], fov:45}}>
+      <Canvas camera={{position: [0,-2.5,25], fov:45}}>
         {/* <fog attach="fog" args={['#ffad66', 38, 55]} /> */}
         {/* <color attach="background" args={['#ffad66']} /> */}
         {/* <Environment files="/sky.hdr" /> */}
         <primitive object={texture} attach="background" />
-        <Environment map={texture} />
+        <Environment map={texture} rotation={[Math.PI * 0.05, 0,0]}/>
 
         <Suspense fallback={null}>
           {/* <Sky  */}
