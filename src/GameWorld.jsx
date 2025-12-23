@@ -15,6 +15,16 @@ const LOOP_DISTANCE = 65;
 function TrainModel() {
   // useGLTF checks /public folder by default
   const { scene } = useGLTF('/train.glb');
+  
+  useEffect(() => {
+    scene.traverse((child) => {
+      if (child.isMesh) {
+        child.material.emissive = new THREE.Color("#442200");
+        child.material.emissiveIntensity = 0.2;
+      }
+    });
+  }, [scene]);
+
 
   return (
     <primitive
@@ -35,19 +45,19 @@ function Lampost({ movie }) {
   return (
     <group position={[movie.x, -5.2, -14]}>
       {/* 3d model */}
-      <primitive object={clonedScene} scale={0.25} />
+      <primitive object={clonedScene} scale={0.35} />
 
       {/* light source */}
       <pointLight
-        position={[-1,9.5,0.5]}
-        intensity={7}
+        position={[-1,13,0.5]}
+        intensity={15}
         distance={10}
         color={lampColor}
       />
 
       {/* the movie poster */}
-      <mesh position={[0,7,0.2]}>
-        <planeGeometry args={[3,4.5]} />
+      <mesh position={[0,8.5,0.2]}>
+        <planeGeometry args={[5,7.5]} />
         <Suspense fallback={<meshStandardMaterial color="gray" />}>
           <PosterMaterial url={movie.posterUrl} />
         </Suspense>
@@ -59,7 +69,7 @@ function Lampost({ movie }) {
 // helper to load multiple images in a loop 
 function PosterMaterial({ url }) {
   const texture = useTexture(url);
-  return <meshStandardMaterial map={texture} side={2} emissive={"#ffffff"} emissiveIntensity={0.1} />;
+  return <meshStandardMaterial map={texture} side={2} emissive={"#ffffff"} emissiveIntensity={0.05} />;
 }
 
 
@@ -68,34 +78,6 @@ function WorldContent({ maps }) {
 
   return (
     <>
-      {/* floor */}
-      {/* <mesh rotation={[-Math.PI/2, 0,0]} position={[0,-3,0]}> */}
-      {/*   <planeGeometry args={[65,10]} /> */}
-      {/*   <meshPhysicalMaterial color='#2e5a88' transparent opacity={0.9} transmission={1} roughness={0.2}/> */}
-      {/* </mesh> */}
-      <mesh rotation={[-Math.PI/2,0,0]} position={[0,-5,0]}>
-        <planeGeometry args={[70,40]} />
-        <MeshReflectorMaterial
-          normalMap={normalMap}
-          normalScale={[0.15,0.15]} // ripple depth 
-          roughnessMap={roughnessMap}
-          aoMap={aoMap}
-          blur={[300,100]} // width, height
-          resolution={1024}
-          mixBlur={0.7}
-          mixStrength={50} //strength of reflection
-          roughness={0.8} //hgiher roughness looks more like water than mirror
-          depthScale={1}
-          minDepthThreshold={0.7}
-          maxDepthThreshold={1.2}
-          color="#102030"
-          metalness={0.7}
-          mirror={1}
-          transparent
-          opacity={0.9}
-        />
-      </mesh>
-
       {MOVIE_DATA.map((movie) => (
         <Lampost key={movie.id} movie={movie} />
       ))}
@@ -123,7 +105,7 @@ export default function GameWorld({ soundRef }) {
   useMemo(() => {
     [normalMap, roughnessMap, aoMap].forEach((map) => {
       map.wrapS = map.wrapT = THREE.RepeatWrapping;
-      map.repeat.set(8, 4);
+      map.repeat.set(6.5, 4.5);
     });
   }, [normalMap, roughnessMap, aoMap]);
 
@@ -188,14 +170,27 @@ export default function GameWorld({ soundRef }) {
     state.scene.environmentRotation.y = distance.current * 0.005;
 
     // ripple effect as train moves through water
-    const flowSpeed = distance.current * 0.1;
     if (normalMap) {
-      normalMap.offset.x = flowSpeed;
-      roughnessMap.offset.x = flowSpeed;
-      aoMap.offset.x = flowSpeed;
+      // const flowSpeed = wrappedDist * 0.1;
+      const flowSpeed = distance.current * 0.05;
+      const constantDrift = state.clock.elapsedTime * 0.02;
 
-      // tiny y drift
-      normalMap.offset.y += delta * 0.02;
+      // normalMap.offset.x = flowSpeed;
+      // roughnessMap.offset.x = flowSpeed;
+      // aoMap.offset.x = flowSpeed;
+      normalMap.offset.set(flowSpeed, constantDrift);
+      roughnessMap.offset.set(flowSpeed, constantDrift);
+      aoMap.offset.set(flowSpeed, constantDrift);
+      normalMap.needsUpdate = true;
+
+      // // tiny y drift
+      // normalMap.offset.y += delta * 0.02;
+      // normalMap.offset.y = constantDrift;
+      // roughnessMap.offset.y = constantDrift;
+      // aoMap.offset.y = constantDrift;
+     
+
+
     }
 
     // proximity - find a movie where distance is < 2 units away 
@@ -221,7 +216,7 @@ export default function GameWorld({ soundRef }) {
     <>
       {/* UI prompt- only show if nearbyMovie is not null */}
       {nearbyMovie && !isExpanded && (
-        <Html center position={[0,-3,0]}>
+        <Html center position={[0,-5,0]}>
           <div style={{
             background:'black', color:'white', padding:'10px',
             borderRadius: '10px', whiteSpace: 'nowrap', fontFamily: 'sans-serif'
@@ -251,18 +246,45 @@ export default function GameWorld({ soundRef }) {
           </div>
         </Html>
       )}
-
       {/* train */}
       <TrainModel />  
+
+     
+      {/* sea */}
+      <mesh rotation={[-Math.PI/2,0,0]} position={[0,-5,0]}>
+        <planeGeometry args={[LOOP_DISTANCE + 0.5,40]} />
+        <MeshReflectorMaterial
+          normalMap={normalMap}
+          normalScale={[0.6,0.6]} // ripple depth 
+          roughnessMap={roughnessMap}
+          aoMap={aoMap}
+          blur={[400,100]} // width, height
+          resolution={1024}
+          mixBlur={0.7}
+          mixStrength={80} //strength of reflection
+          roughness={0.4} //hgiher roughness looks more like water than mirror
+          depthScale={0.4}
+          minDepthThreshold={0.4}
+          maxDepthThreshold={1.2}
+          color="#050a12"
+          metalness={0.9}
+          mirror={1}
+          transparent
+          opacity={1}
+          depthToBlurRatioBias={0}
+        />
+      </mesh>
+
+
       {/* the world (floorRef) */}
       <group ref={floorRef}>
         <WorldContent maps={{ normalMap, roughnessMap, aoMap }}/>
 
-        <group position={[LOOP_DISTANCE, 0,0]}>
+        <group position={[LOOP_DISTANCE, -0.01,0]}>
           <WorldContent maps={{ normalMap, roughnessMap, aoMap }}/>
         </group>
 
-        <group position={[-LOOP_DISTANCE,0,0]}>
+        <group position={[-LOOP_DISTANCE,-0.01,0]}>
           <WorldContent maps={{ normalMap, roughnessMap, aoMap }}/>
         </group>
       </group>
