@@ -8,36 +8,12 @@ import GameWorld from './GameWorld';
 import * as THREE from 'three';
 
 
-// function SkyBox({ url }) {
-//   const texture = useLoader(THREE.TextureLoader, url);
-//
-//   return (
-//     <mesh position={[0, -15, -150]}>
-//       <planeGeometry args={[800, 400]} /> 
-//       <meshBasicMaterial
-//         map={texture}
-//         fog={false}
-//         transparent={true}
-//       />
-//     </mesh>
-//   );
-// }
-// const texture = useLoader(THREE.TextureLoader, '/sky2.png');
-//
-// useMemo(() => {
-//   texture.mapping = THREE.EquirectangularReflectionMapping;
-//   texture.offset.y = -0.15;
-//   texture.wrapT = THREE.RepeatWrapping;
-// }, [texture]);
-
 
 export default function App() {
   const soundRef = useRef();
   
-  // const texture = useLoader(THREE.TextureLoader, '/sky2.png');
-  // texture.mapping = THREE.EquirectangularReflectionMapping;
-  // texture.offset.y = 10;
-  const texture = useLoader(THREE.TextureLoader, '/sky2.png');
+
+  const texture = useLoader(THREE.TextureLoader, '/sky.png');
   useMemo(() => {
     texture.mapping = THREE.EquirectangularReflectionMapping;
     texture.wrapT = THREE.RepeatWrapping;
@@ -50,19 +26,19 @@ export default function App() {
       <Soundscape ref={soundRef} />
       {/* logo */}
       <img 
-        src="/logo.png" alt="The Movies of Studio Ghibli"
+        src="/logo3.png" alt="The Movies of Studio Ghibli"
         style={{
           position: 'absolute',
-          top: '20px',
-          left: '20px',
-          width: '150px',
+          top: '5px',
+          left: '5px',
+          width: '250px',
           zIndex: 2000,   // keep above 3d canvas 
           pointerEvents: 'none', // click through the logo
           background: 'transparent'
         }}
       />
       {/* Canvas sets up renderer, scene and camera */}
-      <Canvas camera={{position: [0,-2.5,25], fov:45}}>
+      <Canvas camera={{position: [0,-5,25], fov:50}}>
         {/* <fog attach="fog" args={['#ffad66', 38, 55]} /> */}
         {/* <color attach="background" args={['#ffad66']} /> */}
         {/* <Environment files="/sky.hdr" /> */}

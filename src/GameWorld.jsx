@@ -4,12 +4,40 @@ import { Html, useGLTF, useTexture, Clone, MeshReflectorMaterial } from '@react-
 import * as THREE from 'three';
 
 
+// const MOVIE_DATA = [
+//   { id: 0, title: "Spirited Away", year: "2001", director: "Hayao Miyazaki", description: "During her family's move to the suburbs, a sullen 10-year-old girl wanders into a world ruled by gods, witches and spirits, and where humans are changed into beasts.", x:20, posterUrl: "/spirited-away.jpg", stills:["/spirited/still1.webp","/spirited/still2.webp", "/spirited/still3.webp",],},
+//   { id: 1, title: "My Neighbour Totoro", year: "1988", director: "Hayo Miyazaki", description: "When two girls move to the country to be near their ailing mother, they have adventures with the wondrous forest spirits who live nearby.", x:45, posterUrl: "/totoro.jpg", color: "green" },
+// ];
+
 const MOVIE_DATA = [
-  { id: 0, title: "Spirited Away", year: "2001", description: "A young girl wanders into a spirit world", x:20, posterUrl: "/spirited-away.jpg", color: "gold" },
-  { id: 1, title: "My Neighbour Totoro", year: "1988", description: "Two sisters befriend forest spirits.", x:45, posterUrl: "/totoro.jpg", color: "green" },
+  { id: 0, title: "Nausicaä of the Valley of the Wind", year: "1984", director: "Hayao Miyazaki", description: "Far in the future, after an apocalyptic war has destroyed civilization, Princess Nausicaä strives to stop two warring nations from destroying themselves and their dying planet.", x: 5, posterUrl: "/nausicaa.jpg", stills: [] },
+  { id: 1, title: "Castle in the Sky", year: "1986", director: "Hayao Miyazaki", description: "A young boy and a girl with a magic crystal must race against pirates and foreign agents in a search for a legendary floating castle.", x: 15, posterUrl: "/castle-sky.jpg", stills: [] },
+  { id: 2, title: "Grave of the Fireflies", year: "1988", director: "Isao Takahata", description: "A young boy and his little sister struggle to survive in Japan during World War II.", x: 25, posterUrl: "/fireflies.jpg", stills: [] },
+  { id: 3, title: "My Neighbour Totoro", year: "1988", director: "Hayao Miyazaki", description: "When two girls move to the country to be near their ailing mother, they have adventures with the wondrous forest spirits who live nearby.", x: 35, posterUrl: "/totoro.jpg", stills: [] },
+  { id: 4, title: "Kiki's Delivery Service", year: "1989", director: "Hayao Miyazaki", description: "A young witch, on her mandatory year of independent life, finds fitting into a new community difficult while she supports herself by running an air courier service.", x: 45, posterUrl: "/kiki.jpg", stills: [] },
+  { id: 5, title: "Only Yesterday", year: "1991", director: "Isao Takahata", description: "A twenty-seven-year-old office worker travels to the countryside while reminiscing about her childhood in Tokyo.", x: 55, posterUrl: "/yesterday.jpg", stills: [] },
+  { id: 6, title: "Porco Rosso", year: "1992", director: "Hayao Miyazaki", description: "In 1930s Italy, a veteran World War I pilot is cursed to look like an anthropomorphic pig.", x: 65, posterUrl: "/porco.jpg", stills: [] },
+  { id: 7, title: "Ocean Waves", year: "1993", director: "Tomomi Mochizuki", description: "As a young man returns to his hometown for his high school reunion, he reminisces about the arrival of a beautiful transfer student and the rift she caused between him and his best friend.", x: 75, posterUrl: "/ocean-waves.jpg", stills: [] },
+  { id: 8, title: "Pom Poko", year: "1994", director: "Isao Takahata", description: "A community of magical shape-shifting raccoons desperately struggles to prevent their forest home from being destroyed by urban development.", x: 85, posterUrl: "/pompoko.jpg", stills: [] },
+  { id: 9, title: "Whisper of the Heart", year: "1995", director: "Yoshifumi Kondō", description: "A love story between a girl who loves reading books, and a boy who has previously checked out all of the library books she chooses.", x: 95, posterUrl: "/whisper.jpg", stills: [] },
+  { id: 10, title: "Princess Mononoke", year: "1997", director: "Hayao Miyazaki", description: "On a journey to find the cure for a Tatarigami's curse, Ashitaka finds himself in the middle of a war between the forest gods and Tatara, a mining colony.", x: 105, posterUrl: "/mononoke.jpg", stills: [] },
+  { id: 11, title: "My Neighbors the Yamadas", year: "1999", director: "Isao Takahata", description: "The life and misadventures of a family in contemporary Japan.", x: 115, posterUrl: "/yamadas.jpg", stills: [] },
+  { id: 12, title: "Spirited Away", year: "2001", director: "Hayao Miyazaki", description: "During her family's move to the suburbs, a 10-year-old girl wanders into a world ruled by gods, witches and spirits.", x: 125, posterUrl: "/spirited-away.jpg", stills: ["/spirited/still1.webp", "/spirited/still2.webp", "/spirited/still3.webp"] },
+  { id: 13, title: "The Cat Returns", year: "2002", director: "Hiroyuki Morita", description: "After helping a cat, a girl finds herself involuntarily engaged to a cat prince in a magical world.", x: 135, posterUrl: "/cat-returns.jpg", stills: [] },
+  { id: 14, title: "Howl's Moving Castle", year: "2004", director: "Hayao Miyazaki", description: "When an unconfident young woman is cursed with an old body by a spiteful witch, her only chance of breaking the spell lies with a self-indulgent yet insecure young wizard.", x: 145, posterUrl: "/howl.jpg", stills: [] },
+  { id: 15, title: "Tales from Earthsea", year: "2006", director: "Gorō Miyazaki", description: "In a mythical land, a man and a young boy investigate a series of unusual occurrences.", x: 155, posterUrl: "/earthsea.jpg", stills: [] },
+  { id: 16, title: "Ponyo", year: "2008", director: "Hayao Miyazaki", description: "A five-year-old boy develops a relationship with Ponyo, a goldfish princess who longs to become a human after falling in love with him.", x: 165, posterUrl: "/ponyo.jpg", stills: [] },
+  { id: 17, title: "Arrietty", year: "2010", director: "Hiromasa Yonebayashi", description: "The Clock family are four-inch-tall people who live anonymously in another family's residence, borrowing simple items to make their home.", x: 175, posterUrl: "/arrietty.jpg", stills: [] },
+  { id: 18, title: "From Up on Poppy Hill", year: "2011", director: "Gorō Miyazaki", description: "A group of Yokohama teens look to save their school's clubhouse from the wrecking ball in preparations for the 1964 Tokyo Olympics.", x: 185, posterUrl: "/poppy-hill.jpg", stills: [] },
+  { id: 19, title: "The Wind Rises", year: "2013", director: "Hayao Miyazaki", description: "A lifelong love of flight inspires Japanese aviation engineer Jiro Horikoshi, whose storied career includes the creation of the A-6M World War II fighter plane.", x: 195, posterUrl: "/wind-rises.jpg", stills: [] },
+  { id: 20, title: "The Tale of The Princess Kaguya", year: "2013", director: "Isao Takahata", description: "Found inside a shining stalk of bamboo by an old bamboo cutter and his wife, a tiny girl grows rapidly into an exquisite young lady.", x: 205, posterUrl: "/kaguya.png", stills: [] },
+  { id: 21, title: "When Marnie Was There", year: "2014", director: "Hiromasa Yonebayashi", description: "Upon being sent to live with relatives in the countryside due to an illness, a girl becomes obsessed with an abandoned mansion and meets a girl named Marnie.", x: 215, posterUrl: "/marnie.jpg", stills: [] },
+  { id: 22, title: "The Red Turtle", year: "2016", director: "Michaël Dudok de Wit", description: "A man is shipwrecked on a deserted island and encounters a giant red turtle.", x: 225, posterUrl: "/red-turtle.jpg", stills: [] },
+  { id: 23, title: "Earwig and the Witch", year: "2020", director: "Gorō Miyazaki", description: "An orphan girl, Earwig, is adopted by a witch and comes home to a spooky house filled with mystery and magic.", x: 235, posterUrl: "/earwig.jpg", stills: [] },
+  { id: 24, title: "The Boy and the Heron", year: "2023", director: "Hayao Miyazaki", description: "A young boy named Mahito venturing into a world shared by the living and the dead.", x: 245, posterUrl: "/boy-heron.png", stills: [] }
 ];
 //const LOOP_DISTANCE = 500;
-const LOOP_DISTANCE = 65;
+const LOOP_DISTANCE = 265;
 
 
 function TrainModel() {
@@ -30,7 +58,7 @@ function TrainModel() {
     <primitive
       object={scene}
       scale={1}
-      position={[0, -5.25, 0]}
+      position={[0, -5.75, 0]}
       rotation={[0,0,0]}
     />
   );
@@ -89,6 +117,7 @@ function WorldContent({ maps }) {
 export default function GameWorld({ soundRef }) {
   const floorRef = useRef();
   const keys = useRef({});
+  const [expandedImage, setExpandedImage] = useState(null);
 
   // we use refs for values that change every frame
   // similar to python variables
@@ -171,30 +200,19 @@ export default function GameWorld({ soundRef }) {
 
     // ripple effect as train moves through water
     if (normalMap) {
-      // const flowSpeed = wrappedDist * 0.1;
       const flowSpeed = distance.current * 0.05;
       const constantDrift = state.clock.elapsedTime * 0.02;
 
-      // normalMap.offset.x = flowSpeed;
-      // roughnessMap.offset.x = flowSpeed;
-      // aoMap.offset.x = flowSpeed;
+
       normalMap.offset.set(flowSpeed, constantDrift);
       roughnessMap.offset.set(flowSpeed, constantDrift);
       aoMap.offset.set(flowSpeed, constantDrift);
       normalMap.needsUpdate = true;
 
-      // // tiny y drift
-      // normalMap.offset.y += delta * 0.02;
-      // normalMap.offset.y = constantDrift;
-      // roughnessMap.offset.y = constantDrift;
-      // aoMap.offset.y = constantDrift;
-     
-
-
     }
 
     // proximity - find a movie where distance is < 2 units away 
-    const found = MOVIE_DATA.find(m => Math.abs(m.x - wrappedDist) < 2);
+    const found = MOVIE_DATA.find(m => Math.abs(m.x - wrappedDist) < 4);
     // update state if nearby movie has changed (dont rerender otherwise)
     if (found?.id !== nearbyMovie?.id) {
       setNearbyMovie(found || null);
@@ -216,10 +234,10 @@ export default function GameWorld({ soundRef }) {
     <>
       {/* UI prompt- only show if nearbyMovie is not null */}
       {nearbyMovie && !isExpanded && (
-        <Html center position={[0,-5,0]}>
+        <Html center position={[0,-7,0]}>
           <div style={{
-            background:'black', color:'white', padding:'10px',
-            borderRadius: '10px', whiteSpace: 'nowrap', fontFamily: 'sans-serif'
+            background:'#CE9CC7', color:'#201637', padding:'10px',
+            borderRadius: '15px', whiteSpace: 'nowrap', fontFamily: 'Futura', fontWeight: 500
           }}>
             Press [Space] to view {nearbyMovie.title}
           </div>
@@ -235,14 +253,113 @@ export default function GameWorld({ soundRef }) {
             borderRadius: '10px',
             width: '400px',
             color: '#333',
-            textAlign: 'center',
+            textAlign: 'left',
             boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
-            fontFamily: 'serif',
+            fontFamily: 'Futura',
+            fontWeight: 400,
           }}>
-            <h3>{nearbyMovie.title}</h3>
-            <p>{nearbyMovie.year}</p>
+            <h3 style={{ marginBottom: '4px', fontWeight:700}}>{nearbyMovie.title}</h3>
+            <p style={{ marginTop:0, opacity:0.6 }}>Year: {nearbyMovie.year}</p>
+            <p style={{ marginTop:'10px', lineHeight:1.45}}>Director: {nearbyMovie.director}</p>
             <p>{nearbyMovie.description}</p>
-            <button onClick={() => setIsExpanded(false)}>Close</button>
+            <div style={{
+              display: 'flex',
+              gap: '8px',
+              marginTop: '12px'
+            }}>
+              {nearbyMovie.stills.map((src, i) => (
+                <img
+                  key={i}
+                  src={src}
+                  alt=""
+                  onClick={() => setExpandedImage(src)}
+                  style={{
+                    width: '100px',
+                    height: '65px',
+                    objectFit: 'cover',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    boxShadow: '0 4px 10px rgba(0,0,0,0.3)',
+                  }}
+                  onMouseEnter={e =>
+                    (e.currentTarget.style.transform = 'scale(1.05)')
+                  }
+                  onMouseLeave={e =>
+                    (e.currentTarget.style.transform = 'scale(1)')
+                  }
+                />
+              ))}
+            </div>
+            {/* CLOSE PANEL BUTTON */}
+            <button
+              onClick={() => setIsExpanded(false)}
+              style={{
+                marginTop: '14px',
+                fontFamily: 'Futura',
+                fontWeight: 400,
+                background: '#AC85A9',
+                border: 'none',
+                padding: '6px 12px',
+                borderRadius: '6px',
+                cursor: 'pointer',
+              }}
+            >
+              Close
+            </button>
+
+            {expandedImage && (
+              <div
+                onClick={() => setExpandedImage(null)}
+                style={{
+                  position: 'fixed',
+                  inset: 0,
+                  background: 'rgba(0,0,0,0.75)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  zIndex: 9999,
+                }}
+              >
+                <div
+                  onClick={e => e.stopPropagation()}
+                  style={{
+                    position: 'relative',
+                  }}
+                >
+                  <img
+                    src={expandedImage}
+                    alt=""
+                    style={{
+                      maxWidth: '90vw',
+                      maxHeight: '80vh',
+                      borderRadius: '10px',
+                      boxShadow: '0 30px 80px rgba(0,0,0,0.6)',
+                    }}
+                  />
+
+                  {/* close button */}
+                  <button
+                    onClick={() => setExpandedImage(null)}
+                    style={{
+                      position: 'absolute',
+                      top: '-10px',
+                      right: '-8px',
+                      width: '21px',
+                      height: '32px',
+                      borderRadius: '50%',
+                      border: 'none',
+                      background: '#463D55',
+                      cursor: 'pointer',
+                      fontSize: '18px',
+                      fontFamily: 'Futura',
+                      lineHeight: '12px',
+                    }}
+                  >
+                    close
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </Html>
       )}
@@ -252,7 +369,7 @@ export default function GameWorld({ soundRef }) {
      
       {/* sea */}
       <mesh rotation={[-Math.PI/2,0,0]} position={[0,-5,0]}>
-        <planeGeometry args={[LOOP_DISTANCE + 15,40]} />
+        <planeGeometry args={[LOOP_DISTANCE + 30,40]} />
         <MeshReflectorMaterial
           normalMap={normalMap}
           normalScale={[0.6,0.6]} // ripple depth 
