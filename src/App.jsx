@@ -5,6 +5,7 @@ import { EffectComposer, Bloom, Noise, Vignette } from '@react-three/postprocess
 import './App.css';
 import Soundscape from './Soundscape';
 import GameWorld from './GameWorld';
+import LoadingScreen from './LoadingScreen';
 import * as THREE from 'three';
 
 
@@ -26,12 +27,12 @@ export default function App() {
       <Soundscape ref={soundRef} />
       {/* logo */}
       <img 
-        src="/logo3.png" alt="The Movies of Studio Ghibli"
+        src="/logo5.png" alt="The Movies of Studio Ghibli"
         style={{
           position: 'absolute',
           top: '5px',
           left: '5px',
-          width: '250px',
+          width: '200px',
           zIndex: 2000,   // keep above 3d canvas 
           pointerEvents: 'none', // click through the logo
           background: 'transparent'
@@ -45,7 +46,7 @@ export default function App() {
         <primitive object={texture} attach="background" />
         <Environment map={texture} rotation={[Math.PI * 0.05, 0,0]}/>
 
-        <Suspense fallback={null}>
+        <Suspense fallback={<LoadingScreen />}>
           {/* <Sky  */}
           {/*   sunPosition={[0, 10, 100]} */}
           {/*   turbidity={0.1} */}
