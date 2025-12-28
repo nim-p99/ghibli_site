@@ -27,12 +27,12 @@ export default function App() {
       <Soundscape ref={soundRef} />
       {/* logo */}
       <img 
-        src="/logo5.png" alt="The Movies of Studio Ghibli"
+        src="/logo7.png" alt="The Movies of Studio Ghibli"
         style={{
           position: 'absolute',
-          top: '5px',
-          left: '5px',
-          width: '200px',
+          top: '0px',
+          left: '0px',
+          width: '220px',
           zIndex: 2000,   // keep above 3d canvas 
           pointerEvents: 'none', // click through the logo
           background: 'transparent'
@@ -40,18 +40,10 @@ export default function App() {
       />
       {/* Canvas sets up renderer, scene and camera */}
       <Canvas camera={{position: [0,-5,25], fov:50}}>
-        {/* <fog attach="fog" args={['#ffad66', 38, 55]} /> */}
-        {/* <color attach="background" args={['#ffad66']} /> */}
-        {/* <Environment files="/sky.hdr" /> */}
         <primitive object={texture} attach="background" />
         <Environment map={texture} rotation={[Math.PI * 0.05, 0,0]}/>
 
         <Suspense fallback={<LoadingScreen />}>
-          {/* <Sky  */}
-          {/*   sunPosition={[0, 10, 100]} */}
-          {/*   turbidity={0.1} */}
-          {/*   rayleigh={2} */}
-          {/* /> */}
           <GameWorld soundRef={soundRef}/>
           <directionalLight
             position={[10, 20, 200]}
