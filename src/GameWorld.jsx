@@ -63,14 +63,14 @@ function TrainModel() {
 function Lampost({ movie }) {
   const { scene } = useGLTF('/street-lamp.glb');
   // clone so each lampost can exist independently
-  const clonedScene = scene.clone();
+  //const clonedScene = scene.clone();
   const lampColor = "#ffcc80";
 
   return (
     <group position={[movie.x, -5.2, -14]}>
       {/* 3d model */}
-      <primitive object={clonedScene} scale={0.35} />
-
+      {/* <primitive object={clonedScene} scale={0.35} /> */}
+      <Clone object={scene} scale={0.35} deep={false} />
       {/* light source */}
       <pointLight
         position={[-1,13,0.5]}
@@ -95,6 +95,7 @@ function Lampost({ movie }) {
           </Suspense>
         </mesh>
       )}
+      
     </group>
   );
 }
@@ -104,7 +105,8 @@ function Lampost({ movie }) {
 // helper to load multiple images in a loop 
 function PosterMaterial({ url }) {
   const texture = useTexture(url);
-  return <meshStandardMaterial map={texture} side={2} emissive={"#ffffff"} emissiveIntensity={0.025} />;
+  // return <meshStandardMaterial map={texture} side={2} emissive={"#ffffff"} emissiveIntensity={0.025} />;
+  return <meshBasicMaterial map={texture} side={2} />;
 }
 
 function WelcomeMaterial({ url }) {
