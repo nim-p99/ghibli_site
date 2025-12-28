@@ -366,7 +366,7 @@ export default function GameWorld({ soundRef }) {
                 borderRadius: '14px',
                 width: '420px',
                 color: '#333',
-                textAlign: 'center',
+                textAlign: 'left',
                 boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
                 fontFamily: 'Futura',
               }}
