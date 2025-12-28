@@ -3,5 +3,6 @@ tribute to the great films of studio ghibli. I had fun making this using react a
 
 https://www.ghiblimovies.world/
 
-<img width="1335" height="985" alt="image" src="https://github.com/user-attachments/assets/b63d88eb-011b-47db-af88-908d7411ff18" />
+<img width="1345" height="975" alt="image" src="https://github.com/user-attachments/assets/55c41581-1a07-4174-9c54-42d459487bda" />
+
 
