@@ -32,7 +32,7 @@ export default function App() {
           position: 'absolute',
           top: '0px',
           left: '0px',
-          width: '220px',
+          width: '200px',
           zIndex: 2000,   // keep above 3d canvas 
           pointerEvents: 'none', // click through the logo
           background: 'transparent'

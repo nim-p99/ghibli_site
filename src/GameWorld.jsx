@@ -263,8 +263,8 @@ export default function GameWorld({ soundRef }) {
       >
         <div style={{
           position: 'absolute', // Absolute relative to the fullscreen container
-          top: '20px',
-          right: '20px',
+          top: '10px',
+          right: '10px',
           zIndex: 3000,
         }}>
           <button
@@ -276,7 +276,7 @@ export default function GameWorld({ soundRef }) {
               padding: '10px 15px',
               borderRadius: '20px',
               fontFamily: 'Futura',
-              fontSize: '14px',
+              fontSize: '12px',
               fontWeight: '600',
               cursor: 'pointer',
               pointerEvents: 'auto', 
@@ -344,8 +344,8 @@ export default function GameWorld({ soundRef }) {
       {nearbyMovie && !isExpanded && (
         <Html center position={[0,-7,0]}>
           <div style={{
-            background:'#AD5463', color:'#ffffff', padding:'10px',
-            borderRadius: '15px', whiteSpace: 'nowrap', fontFamily: 'Futura', fontWeight: 500, opacity: 0.9,
+            background:'#AD5463', color:'#ffffff', padding:'5px',
+            borderRadius: '5px', whiteSpace: 'nowrap', fontFamily: 'Futura', fontWeight: 500, opacity: 1,
             
           }}>
             {nearbyMovie.type === 'welcome'
