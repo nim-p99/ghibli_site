@@ -151,10 +151,6 @@ export default function GameWorld({ soundRef }) {
       setIsMobile(isTouchDevice);
     }, []);
 
- 
-
-  
-  
   
   // we use refs for values that change every frame
   // similar to python variables
@@ -222,8 +218,6 @@ export default function GameWorld({ soundRef }) {
     }
 
 
-   
-
     // update distance
     distance.current += speed.current * delta;
 
@@ -289,10 +283,10 @@ export default function GameWorld({ soundRef }) {
       {/* about button */}
       <Html 
         portal={document.body} 
-        fullscreen // This is the missing piece to stop the centering
+        fullscreen 
       >
         <div style={{
-          position: 'absolute', // Absolute relative to the fullscreen container
+          position: 'absolute', 
           top: '10px',
           right: '10px',
           zIndex: 3000,
