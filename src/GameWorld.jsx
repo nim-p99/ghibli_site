@@ -204,9 +204,9 @@ export default function GameWorld({ soundRef }) {
   useFrame((state, delta ) => {
     // runs 60 times per second
     // every time a new frame is draw, run this math 
-    if (keys.current['ArrowLeft']) {
+    if (keys.current['ArrowRight']) {
       speed.current = Math.min(speed.current + 0.1, 5); // max speed 5 
-    } else if (keys.current['ArrowRight']) {
+    } else if (keys.current['ArrowLeft']) {
       speed.current = Math.max(speed.current - 0.1, -5); // max reverse -5 
     } else {
       // friction -> gradually slow down to 0 
