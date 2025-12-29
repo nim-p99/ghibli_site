@@ -59,7 +59,10 @@ const Soundscape = forwardRef((props, ref) => {
           pointerEvents: 'auto',
         }}>
           <button
-            onClick={() => setIsMuted(!isMuted)}
+            onPointerDown={(e) => {
+              e.stopPropagation();
+              setIsMuted(!isMuted);
+            }}
             style={{
               background: '#A85261',
               border: '1px solid rgba(255, 255, 255, 0.3)',
