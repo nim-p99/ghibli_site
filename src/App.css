@@ -24,7 +24,7 @@ html, body, #root {
   background: #a9cce3; /* blue sky */
   font-family: 'Futura';
   font-weight: 400;
-  /* position: fixed; */
+  position: fixed;
 }
 
 h1, h2, h3 {
