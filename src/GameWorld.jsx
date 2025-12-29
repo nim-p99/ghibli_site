@@ -441,6 +441,7 @@ export default function GameWorld({ soundRef }) {
                 style={{
                   marginTop: '16px',
                   background: '#AC85A9',
+                  color: 'white',
                   border: 'none',
                   padding: '8px 14px',
                   borderRadius: '8px',
