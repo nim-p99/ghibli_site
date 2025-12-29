@@ -1,20 +1,30 @@
-import React, {useEffect, useRef, useImperativeHandle, forwardRef } from 'react';
+import React, {useEffect, useRef, useImperativeHandle, forwardRef, useState } from 'react';
 
 const Soundscape = forwardRef((props, ref) => {
   const musicRef = useRef();
   const seaRef = useRef();
   const tracksRef = useRef();
 
+  const [isMuted, setIsMuted] = useState(false);
+
   // expose function to the parent (App)
   useImperativeHandle(ref, () => ({
     updateTracks: (speed) => {
-      if (tracksRef.current) {
+      if (tracksRef.current && !isMuted) {
         // map speed to volume (0.0 to 1.0)
         const motion = Math.min(Math.abs(speed)/5, 0.4);
         tracksRef.current.volume = motion;
       }
     }
   }));
+
+  useEffect(() => {
+    [musicRef, seaRef, tracksRef].forEach(audio => {
+      if (audio.current) {
+        audio.current.muted = isMuted;
+      }
+    });
+  }, [isMuted]);
 
   useEffect(() => {
     const startAudio = () => {
@@ -40,11 +50,40 @@ const Soundscape = forwardRef((props, ref) => {
   }, []);
 
   return (
-    <div style={{ display: 'none' }}>
-      <audio ref={musicRef} src="/bg-music.mp3" loop />
-      <audio ref={seaRef} src="/sea-waves.mp3" loop />
-      <audio ref={tracksRef} src="/train-tracks.mp3" loop />
-    </div>
+    <>
+      <div style={{
+          position: 'absolute',
+          top: '12px',
+          right: '100px', 
+          zIndex: 3000,
+        }}>
+          <button
+            onClick={() => setIsMuted(!isMuted)}
+            style={{
+              background: '#A85261',
+              border: '1px solid rgba(255, 255, 255, 0.3)',
+              color: 'white',
+              padding: '7px',
+              borderRadius: '50%',
+              cursor: 'pointer',
+              width: '35px',
+              height: '35px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '18px',
+              pointerEvents: 'auto'
+            }}
+          >
+            {isMuted ? '🔇' : '🔊'}
+          </button>
+      </div>
+      <div style={{ display: 'none' }}>
+        <audio ref={musicRef} src="/bg-music.mp3" loop />
+        <audio ref={seaRef} src="/sea-waves.mp3" loop />
+        <audio ref={tracksRef} src="/train-tracks.mp3" loop />
+      </div>
+    </>
   );
 });
 
