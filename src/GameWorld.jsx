@@ -378,13 +378,17 @@ export default function GameWorld({ soundRef }) {
       {nearbyMovie && !isExpanded && (
         <Html center position={[0, isMobile ? -5 : -7,0]} portal={document.body}>
           <div 
-            onClick={() => setIsExpanded(true)}
+            // onClick={() => setIsExpanded(true)}
+            onPointerDown={(e) => {
+              e.stopPropagation();
+              setIsExpanded(true);
+            }}
             style={{
             background:'#AD5463', color:'#ffffff', padding:'5px',
             borderRadius: '5px', whiteSpace: 'nowrap', fontFamily: 'Futura',
             fontWeight: 500, opacity: 1, cursor: isMobile ? 'pointer' : 'default',
             pointerEvents: 'auto', userSelect: 'none', WebkitTapHighlightColor: 'transparent',
-            zIndex: 3000,
+            zIndex: 5000, touchAction: 'none',
             
           }}>
             {nearbyMovie.type === 'welcome'
