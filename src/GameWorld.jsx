@@ -376,7 +376,7 @@ export default function GameWorld({ soundRef }) {
 
       {/* UI prompt- only show if nearbyMovie is not null */}
       {nearbyMovie && !isExpanded && (
-        <Html center position={[0,-7,0]} portal={document.body}>
+        <Html center position={[0, isMobile ? -3 : -7,0]} portal={document.body}>
           <div 
             onClick={() => setIsExpanded(true)}
             style={{
@@ -400,7 +400,11 @@ export default function GameWorld({ soundRef }) {
 
       {/* UI movie details - visible only if expanded */}
       {nearbyMovie && isExpanded && (
-        <Html center>
+        <Html 
+          center
+          portal={document.body}
+          distanceFactor={10}
+        >
           {nearbyMovie.type === 'welcome' ? (
             <div
               style={{
@@ -416,6 +420,7 @@ export default function GameWorld({ soundRef }) {
                 maxHeight: '80vh', 
                 overflowY: 'auto',
                 pointerEvents: 'auto',
+                transform: isMobile ? 'translateY(-10%)' : 'none',
               }}
             >
               <h2 style={{ marginTop: 0 }}>Welcome aboard</h2>
