@@ -36,6 +36,10 @@ const MOVIE_DATA = [
 const LOOP_DISTANCE = 550;
 
 
+
+
+
+
 function TrainModel() {
   // useGLTF checks /public folder by default
   const { scene } = useGLTF('/train.glb');
@@ -133,7 +137,21 @@ export default function GameWorld({ soundRef }) {
   const keys = useRef({});
   const [expandedImage, setExpandedImage] = useState(null);
   const [isAboutOpen, setIsAboutOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [holdingLeft, setHoldingLeft] = useState(false);
+  const [holdingRight, setHoldingRight] = useState(false);
 
+  useEffect(() => {
+      if (typeof window === 'undefined') return;
+
+      const isTouchDevice =
+        /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+        window.matchMedia('(pointer: coarse)').matches;
+
+      setIsMobile(isTouchDevice);
+    }, []);
+
+  
   // we use refs for values that change every frame
   // similar to python variables
   const speed = useRef(0);
@@ -186,14 +204,19 @@ export default function GameWorld({ soundRef }) {
   useFrame((state, delta ) => {
     // runs 60 times per second
     // every time a new frame is draw, run this math 
-    if (keys.current['ArrowRight']) {
+    if (keys.current['ArrowLeft']) {
       speed.current = Math.min(speed.current + 0.1, 5); // max speed 5 
-    } else if (keys.current['ArrowLeft']) {
+    } else if (keys.current['ArrowRight']) {
       speed.current = Math.max(speed.current - 0.1, -5); // max reverse -5 
     } else {
       // friction -> gradually slow down to 0 
       speed.current *= 0.95;
     }
+
+    if (isExpanded || isAboutOpen) {
+      speed.current *= 0.8;
+    }
+
 
     // update distance
     distance.current += speed.current * delta;
@@ -243,6 +266,7 @@ export default function GameWorld({ soundRef }) {
       soundRef.current.updateTracks(speed.current)
     }
 
+
   });
 
   return (
@@ -259,10 +283,10 @@ export default function GameWorld({ soundRef }) {
       {/* about button */}
       <Html 
         portal={document.body} 
-        fullscreen // This is the missing piece to stop the centering
+        fullscreen 
       >
         <div style={{
-          position: 'absolute', // Absolute relative to the fullscreen container
+          position: 'absolute', 
           top: '10px',
           right: '10px',
           zIndex: 3000,
@@ -297,19 +321,29 @@ export default function GameWorld({ soundRef }) {
               background: 'white',
               padding: '24px',
               borderRadius: '14px',
-              width: '420px',
+              width: isMobile ? '70vw' : '420px',
+              maxWidth: '420px',
               color: '#333',
               textAlign: 'left',
               boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
               fontFamily: 'Futura',
+              maxHeight: '80vh', 
+              overflowY: 'auto',
+              pointerEvents: 'auto',
             }}
           >
             <h2 style={{ marginTop: 0, color: '#6F576E' }}>About this site</h2>
             
+            {isMobile && (
+              <h4 style={{ lineHeight: 1.6}}>
+                This website only works on desktop at the moment!
+              </h4>
+            )}
+
             <p style={{ lineHeight: 1.6 }}>
-              This interactive gallery celebrates the legacy of Studio Ghibli. 
-              As you travel across the endless sea, you encounter every major 
-              theatrical release in chronological order.
+              Thiss is an interactive gallery celebrating the legacy of Studio Ghibli.
+              As you make your journey across the sea, you can view every major release in 
+              chronological order.
             </p>
 
             <p style={{ lineHeight: 1.6, fontSize: '0.9em', opacity: 0.8 }}>
@@ -342,15 +376,24 @@ export default function GameWorld({ soundRef }) {
 
       {/* UI prompt- only show if nearbyMovie is not null */}
       {nearbyMovie && !isExpanded && (
-        <Html center position={[0,-7,0]}>
-          <div style={{
+        <Html center position={[0,-7,0]} style={{ zIndex:10 }}>
+          <div 
+            onClick={() => setIsExpanded(true)}
+            style={{
             background:'#AD5463', color:'#ffffff', padding:'5px',
-            borderRadius: '5px', whiteSpace: 'nowrap', fontFamily: 'Futura', fontWeight: 500, opacity: 1,
+            borderRadius: '5px', whiteSpace: 'nowrap', fontFamily: 'Futura',
+            fontWeight: 500, opacity: 1, cursor: isMobile ? 'pointer' : 'default',
+            pointerEvents: 'auto', userSelect: 'none', WebkitTapHighlightColor: 'transparent',
+            zIndex: 1000,
             
           }}>
             {nearbyMovie.type === 'welcome'
-              ? 'Press [Space] to begin your journey'
-              : `Press [Space] to view ${nearbyMovie.title}`}
+              ? isMobile
+                ? 'Tap to begin your journey'
+                : 'Press [Space] to begin your journey'
+              : isMobile 
+                ? `Tap to view ${nearbyMovie.title}`
+                : `Press [Space] to view ${nearbyMovie.title}`}
           </div>
         </Html>
       )}
@@ -364,14 +407,24 @@ export default function GameWorld({ soundRef }) {
                 background: 'white',
                 padding: '24px',
                 borderRadius: '14px',
-                width: '420px',
+                width: isMobile ? '70vw' : '420px',
+                maxWidth: '420px',
                 color: '#333',
                 textAlign: 'left',
                 boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
                 fontFamily: 'Futura',
+                maxHeight: '80vh', 
+                overflowY: 'auto',
+                pointerEvents: 'auto',
               }}
             >
               <h2 style={{ marginTop: 0 }}>Welcome aboard</h2>
+              
+              {isMobile && (
+              <h4 style={{ lineHeight: 1.6}}>
+                This website only works on desktop at the moment!
+              </h4>
+              )}
 
               <p style={{ lineHeight: 1.5 }}>
                 Take a journey through the 25 films released by Studio Ghibli. 
@@ -561,6 +614,8 @@ export default function GameWorld({ soundRef }) {
           <WorldContent maps={{ normalMap, roughnessMap, aoMap }}/>
         </group>
       </group>
+      
+
     </>
   );
 }

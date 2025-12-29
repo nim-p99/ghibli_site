@@ -39,7 +39,7 @@ export default function App() {
         }}
       />
       {/* Canvas sets up renderer, scene and camera */}
-      <Canvas camera={{position: [0,-5,25], fov:50}}>
+      <Canvas camera={{position: [0,-5,25], fov:50}} >
         <primitive object={texture} attach="background" />
         <Environment map={texture} rotation={[Math.PI * 0.05, 0,0]}/>
 
