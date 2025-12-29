@@ -24,7 +24,7 @@ const Soundscape = forwardRef((props, ref) => {
       tracksRef.current?.play().catch(() => {});
       // set initial volumes
       if (musicRef.current) musicRef.current.volume = 0.7;
-      if (seaRef.current) seaRef.current.volume = 0.3;
+      if (seaRef.current) seaRef.current.volume = 0.2;
       if (tracksRef.current) tracksRef.current.volume = 0.1;
 
       // clean up - remove listeners

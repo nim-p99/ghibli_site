@@ -341,7 +341,7 @@ export default function GameWorld({ soundRef }) {
             )}
 
             <p style={{ lineHeight: 1.6 }}>
-              Thiss is an interactive gallery celebrating the legacy of Studio Ghibli.
+              This is an interactive gallery celebrating the legacy of Studio Ghibli.
               As you make your journey across the sea, you can view every major release in 
               chronological order.
             </p>
@@ -393,7 +393,7 @@ export default function GameWorld({ soundRef }) {
           }}>
             {nearbyMovie.type === 'welcome'
               ? isMobile
-                ? 'Tap to begin your journey'
+                ? 'Sorry! Only works on desktop :('
                 : 'Press [Space] to begin your journey'
               : isMobile 
                 ? `Tap to view ${nearbyMovie.title}`
