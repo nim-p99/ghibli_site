@@ -466,7 +466,7 @@ export default function GameWorld({ soundRef }) {
               background: 'white',
               padding: '15px',
               borderRadius: '10px',
-              width: '400px',
+              width: '550px',
               color: '#333',
               textAlign: 'left',
               boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
@@ -479,8 +479,8 @@ export default function GameWorld({ soundRef }) {
               <p>{nearbyMovie.description}</p>
               <div style={{
                 display: 'flex',
-                gap: '8px',
-                marginTop: '12px'
+                gap: '50px',
+                marginTop: '8px'
               }}>
                 {nearbyMovie.stills.map((src, i) => (
                   <img
@@ -489,8 +489,8 @@ export default function GameWorld({ soundRef }) {
                     alt=""
                     onClick={() => setExpandedImage(src)}
                     style={{
-                      width: '120px',
-                      height: '65px',
+                      width: '150px',
+                      height: '75px',
                       objectFit: 'cover',
                       borderRadius: '6px',
                       cursor: 'pointer',
