@@ -55,7 +55,8 @@ const Soundscape = forwardRef((props, ref) => {
           position: 'absolute',
           top: '12px',
           right: '100px', 
-          zIndex: 3000,
+          zIndex: 9999,
+          pointerEvents: 'auto',
         }}>
           <button
             onClick={() => setIsMuted(!isMuted)}
