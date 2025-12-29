@@ -38,33 +38,44 @@ export default function App() {
         }}
       />
       {/* Canvas sets up renderer, scene and camera */}
-      <Canvas camera={{position: [0,-5,25], fov:50}} >
-        <primitive object={texture} attach="background" />
-        <Environment map={texture} rotation={[Math.PI * 0.05, 0,0]}/>
+      <div
+        style={{
+          width: '100%',
+          height: '100%',
+          pointerEvents: 'none',
+        }}
+      >
+        <Canvas 
+          camera={{position: [0,-5,25], fov:50}}
+          style={{ pointerEvents: 'auto' }}
+        >
+          <primitive object={texture} attach="background" />
+          <Environment map={texture} rotation={[Math.PI * 0.05, 0,0]}/>
 
-        <Suspense fallback={<LoadingScreen />}>
-          <GameWorld soundRef={soundRef}/>
-          <directionalLight
-            position={[10, 20, 200]}
-            intensity={4}
-            color="#ffaa00"
-            castShadow
-          />
-          
-          <ambientLight intensity={0.6} color="#ff9d66" />
-
-          {/* post-processing effects */}
-          <EffectComposer>
-            <Bloom
-              intensity={1.5} //strength of glow
-              luminanceThreshold={1}  // things brighter than 1 will glow
-              mipmapBlur // higher quality blur
+          <Suspense fallback={<LoadingScreen />}>
+            <GameWorld soundRef={soundRef}/>
+            <directionalLight
+              position={[10, 20, 200]}
+              intensity={4}
+              color="#ffaa00"
+              castShadow
             />
-            <Noise opacity={0.04} />
-            <Vignette eskil={false} offset={0.1} darkness={0.7} />
-          </EffectComposer>
-        </Suspense>
-      </Canvas>
+            
+            <ambientLight intensity={0.6} color="#ff9d66" />
+
+            {/* post-processing effects */}
+            <EffectComposer>
+              <Bloom
+                intensity={1.5} //strength of glow
+                luminanceThreshold={1}  // things brighter than 1 will glow
+                mipmapBlur // higher quality blur
+              />
+              <Noise opacity={0.04} />
+              <Vignette eskil={false} offset={0.1} darkness={0.7} />
+            </EffectComposer>
+          </Suspense>
+        </Canvas>
+      </div>
       <Soundscape ref={soundRef} />
     </div>
   );
