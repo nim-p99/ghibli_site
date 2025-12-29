@@ -580,26 +580,38 @@ export default function GameWorld({ soundRef }) {
       {/* sea */}
       <mesh rotation={[-Math.PI/2,0,0]} position={[0,-5,0]}>
         <planeGeometry args={[LOOP_DISTANCE + 30,40]} />
-        <MeshReflectorMaterial
-          normalMap={normalMap}
-          normalScale={[0.6,0.6]} // ripple depth 
-          roughnessMap={roughnessMap}
-          aoMap={aoMap}
-          blur={[400,100]} // width, height
-          resolution={1024}
-          mixBlur={0.7}
-          mixStrength={80} //strength of reflection
-          roughness={0.4} //hgiher roughness looks more like water than mirror
-          depthScale={0.4}
-          minDepthThreshold={0.4}
-          maxDepthThreshold={1.2}
-          color="#050a12"
-          metalness={0.9}
-          mirror={1}
-          transparent
-          opacity={1}
-          depthToBlurRatioBias={0}
-        />
+        {isMobile ? (
+          <meshStandardMaterial
+            color="#050a12"
+            metalness={0.8}
+            roughness={0.2}
+            normalMap={normalMap}
+            normalScale={new THREE.Vector2(0.3, 0.3)}
+            transparent
+            opacity={0.9}
+          />
+        ) : (
+          <MeshReflectorMaterial
+            normalMap={normalMap}
+            normalScale={[0.6,0.6]} // ripple depth 
+            roughnessMap={roughnessMap}
+            aoMap={aoMap}
+            blur={[400,100]} // width, height
+            resolution={1024}
+            mixBlur={0.7}
+            mixStrength={80} //strength of reflection
+            roughness={0.4} //hgiher roughness looks more like water than mirror
+            depthScale={0.4}
+            minDepthThreshold={0.4}
+            maxDepthThreshold={1.2}
+            color="#050a12"
+            metalness={0.9}
+            mirror={1}
+            transparent
+            opacity={1}
+            depthToBlurRatioBias={0}
+          />
+        )}
       </mesh>
 
 
