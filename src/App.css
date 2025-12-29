@@ -34,3 +34,14 @@ h1, h2, h3 {
   z-index: 3000;
   position: relative;
 }
+
+.button {
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  touch-action: none;
+}
+
+canvas {
+  touch-action: none;
+}
