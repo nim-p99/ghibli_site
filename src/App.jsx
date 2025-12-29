@@ -24,7 +24,6 @@ export default function App() {
 
   return (
     <div style={{ width: '100vw', height: '100vh' }}>
-      <Soundscape ref={soundRef} />
       {/* logo */}
       <img 
         src="/logo7.png" alt="The Movies of Studio Ghibli"
@@ -66,6 +65,7 @@ export default function App() {
           </EffectComposer>
         </Suspense>
       </Canvas>
+      <Soundscape ref={soundRef} />
     </div>
   );
 }
