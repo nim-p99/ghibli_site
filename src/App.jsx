@@ -45,8 +45,9 @@ export default function App() {
           pointerEvents: 'none',
         }}
       >
-        <Canvas 
+        <Canvas
           camera={{position: [0,-5,25], fov:50}}
+          dpr={[1, 1.5]}
           style={{ pointerEvents: 'auto' }}
         >
           <primitive object={texture} attach="background" />
@@ -66,9 +67,8 @@ export default function App() {
             {/* post-processing effects */}
             <EffectComposer>
               <Bloom
-                intensity={1.5} //strength of glow
-                luminanceThreshold={1}  // things brighter than 1 will glow
-                mipmapBlur // higher quality blur
+                intensity={0.8}
+                luminanceThreshold={1}
               />
               <Noise opacity={0.04} />
               <Vignette eskil={false} offset={0.1} darkness={0.7} />
