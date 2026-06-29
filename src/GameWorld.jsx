@@ -595,7 +595,7 @@ export default function GameWorld({ soundRef }) {
         <Html portal={document.body} fullscreen style={{ pointerEvents: 'none' }}>
           <div style={{
             position: 'absolute',
-            bottom: '32px',
+            bottom: '140px',
             left: 0,
             right: 0,
             display: 'flex',
