@@ -119,16 +119,25 @@ function WelcomeMaterial({ url }) {
 }
 
 
-function WorldContent({ maps }) {
-  const { normalMap, roughnessMap, aoMap } = maps;
+const VISIBLE_RANGE = 80;
 
-  return (
-    <>
-      {MOVIE_DATA.map((movie) => (
-        <Lampost key={movie.id} movie={movie} />
-      ))}
-    </>
+function WorldContent({ wrappedDistRef, groupOffset = 0 }) {
+  const [visibleMovies, setVisibleMovies] = useState(() =>
+    MOVIE_DATA.filter(m => Math.abs(m.x - (-groupOffset)) < VISIBLE_RANGE)
   );
+  const lastIdsRef = useRef('');
+
+  useFrame(() => {
+    const localDist = wrappedDistRef.current - groupOffset;
+    const next = MOVIE_DATA.filter(m => Math.abs(m.x - localDist) < VISIBLE_RANGE);
+    const newIds = next.map(m => m.id).join(',');
+    if (newIds !== lastIdsRef.current) {
+      lastIdsRef.current = newIds;
+      setVisibleMovies(next);
+    }
+  });
+
+  return visibleMovies.map(movie => <Lampost key={movie.id} movie={movie} />);
 }
 
 
@@ -138,8 +147,8 @@ export default function GameWorld({ soundRef }) {
   const [expandedImage, setExpandedImage] = useState(null);
   const [isAboutOpen, setIsAboutOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [holdingLeft, setHoldingLeft] = useState(false);
-  const [holdingRight, setHoldingRight] = useState(false);
+  const holdingLeft = useRef(false);
+  const holdingRight = useRef(false);
 
   useEffect(() => {
       if (typeof window === 'undefined') return;
@@ -156,6 +165,7 @@ export default function GameWorld({ soundRef }) {
   // similar to python variables
   const speed = useRef(0);
   const distance = useRef(0);
+  const wrappedDistRef = useRef(0);
 
   // water maps 
   const [normalMap, roughnessMap, aoMap] = useTexture([
@@ -204,10 +214,10 @@ export default function GameWorld({ soundRef }) {
   useFrame((state, delta ) => {
     // runs 60 times per second
     // every time a new frame is draw, run this math 
-    if (keys.current['ArrowRight']) {
-      speed.current = Math.min(speed.current + 0.1, 5); // max speed 5 
-    } else if (keys.current['ArrowLeft']) {
-      speed.current = Math.max(speed.current - 0.1, -5); // max reverse -5 
+    if (keys.current['ArrowRight'] || holdingRight.current) {
+      speed.current = Math.min(speed.current + 0.1, 5);
+    } else if (keys.current['ArrowLeft'] || holdingLeft.current) {
+      speed.current = Math.max(speed.current - 0.1, -5);
     } else {
       // friction -> gradually slow down to 0 
       speed.current *= 0.95;
@@ -224,9 +234,9 @@ export default function GameWorld({ soundRef }) {
     // use modulo to wrap the distance
     // JS % can return negative numbers
     const wrappedDist = ((distance.current % LOOP_DISTANCE) + LOOP_DISTANCE) % LOOP_DISTANCE;
+    wrappedDistRef.current = wrappedDist;
 
-
-    // move the floor in negative direction of distance 
+    // move the floor in negative direction of distance
     if (floorRef.current) {
       floorRef.current.position.x = -wrappedDist;
     }
@@ -272,13 +282,13 @@ export default function GameWorld({ soundRef }) {
   return (
     <>
       {/* Instructions */}
-      <Html center position={[0,-11,0]}>
-        <div style ={{
-          color:'#CB99C3', whiteSpace: 'nowrap', opacity: 0.7
-        }}>
-          ← Use the Arrow Keys to move → 
-        </div>
-      </Html>
+      {!isMobile && (
+        <Html center position={[0,-11,0]}>
+          <div style={{ color:'#CB99C3', whiteSpace: 'nowrap', opacity: 0.7 }}>
+            ← Use the Arrow Keys to move →
+          </div>
+        </Html>
+      )}
 
       {/* about button */}
       <Html 
@@ -336,16 +346,10 @@ export default function GameWorld({ soundRef }) {
             }}
           >
             <h2 style={{ marginTop: 0, color: '#6F576E' }}>About this site</h2>
-            
-            {isMobile && (
-              <h4 style={{ lineHeight: 1.6}}>
-                This website only works on desktop at the moment!
-              </h4>
-            )}
 
             <p style={{ lineHeight: 1.6 }}>
               This is an interactive gallery celebrating the legacy of Studio Ghibli.
-              As you make your journey across the sea, you can view every major release in 
+              As you make your journey across the sea, you can view every major release in
               chronological order.
             </p>
 
@@ -396,9 +400,9 @@ export default function GameWorld({ soundRef }) {
           }}>
             {nearbyMovie.type === 'welcome'
               ? isMobile
-                ? 'Sorry! Only works on desktop :('
+                ? 'Tap to begin your journey'
                 : 'Press [Space] to begin your journey'
-              : isMobile 
+              : isMobile
                 ? `Tap to view ${nearbyMovie.title}`
                 : `Press [Space] to view ${nearbyMovie.title}`}
           </div>
@@ -431,21 +435,17 @@ export default function GameWorld({ soundRef }) {
               }}
             >
               <h2 style={{ marginTop: 0 }}>Welcome aboard</h2>
-              
-              {isMobile && (
-              <h4 style={{ lineHeight: 1.6}}>
-                This website only works on desktop at the moment!
-              </h4>
-              )}
 
               <p style={{ lineHeight: 1.5 }}>
-                Take a journey through the 25 films released by Studio Ghibli. 
-                Travel along the track using the arrow keys and stop by each
-                lampost to explore a movie.
+                Take a journey through the 25 films released by Studio Ghibli.
+                Travel along the track and stop by each lampost to explore a movie.
               </p>
 
               <p style={{ opacity: 0.7 }}>
-                Press <strong>Space</strong> near a lampost to open details.
+                {isMobile
+                  ? <>Use the <strong>← →</strong> buttons to move. Tap a lampost prompt to open details.</>
+                  : <>Use the <strong>Arrow Keys</strong> to move. Press <strong>Space</strong> near a lampost to open details.</>
+                }
               </p>
 
               <button
@@ -465,11 +465,13 @@ export default function GameWorld({ soundRef }) {
               </button>
             </div>
           ) : (
-            <div style = {{
+            <div style={{
               background: 'white',
               padding: '15px',
               borderRadius: '10px',
-              width: '550px',
+              width: isMobile ? '88vw' : '550px',
+              maxHeight: '80vh',
+              overflowY: 'auto',
               color: '#333',
               textAlign: 'left',
               boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
@@ -482,8 +484,10 @@ export default function GameWorld({ soundRef }) {
               <p>{nearbyMovie.description}</p>
               <div style={{
                 display: 'flex',
-                gap: '50px',
-                marginTop: '8px'
+                gap: isMobile ? '8px' : '50px',
+                marginTop: '8px',
+                overflowX: isMobile ? 'auto' : 'visible',
+                paddingBottom: isMobile ? '4px' : 0,
               }}>
                 {nearbyMovie.stills.map((src, i) => (
                   <img
@@ -492,8 +496,9 @@ export default function GameWorld({ soundRef }) {
                     alt=""
                     onClick={() => setExpandedImage(src)}
                     style={{
-                      width: '150px',
-                      height: '75px',
+                      width: isMobile ? '110px' : '150px',
+                      height: isMobile ? '70px' : '75px',
+                      flexShrink: 0,
                       objectFit: 'cover',
                       borderRadius: '6px',
                       cursor: 'pointer',
@@ -585,6 +590,55 @@ export default function GameWorld({ soundRef }) {
           )}
         </Html>
       )}
+      {/* mobile movement buttons */}
+      {isMobile && (
+        <Html portal={document.body} fullscreen style={{ pointerEvents: 'none' }}>
+          <div style={{
+            position: 'absolute',
+            bottom: '32px',
+            left: 0,
+            right: 0,
+            display: 'flex',
+            justifyContent: 'space-between',
+            padding: '0 24px',
+            pointerEvents: 'none',
+          }}>
+            {[
+              { label: '←', onDown: () => { holdingLeft.current = true; }, onUp: () => { holdingLeft.current = false; } },
+              { label: '→', onDown: () => { holdingRight.current = true; }, onUp: () => { holdingRight.current = false; } },
+            ].map(({ label, onDown, onUp }) => (
+              <button
+                key={label}
+                onPointerDown={(e) => { e.preventDefault(); onDown(); }}
+                onPointerUp={onUp}
+                onPointerLeave={onUp}
+                onPointerCancel={onUp}
+                style={{
+                  width: '72px',
+                  height: '72px',
+                  borderRadius: '50%',
+                  background: 'rgba(173, 84, 99, 0.85)',
+                  border: '2px solid rgba(255,255,255,0.25)',
+                  color: 'white',
+                  fontSize: '26px',
+                  cursor: 'pointer',
+                  pointerEvents: 'auto',
+                  touchAction: 'none',
+                  userSelect: 'none',
+                  WebkitTapHighlightColor: 'transparent',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontFamily: 'Futura',
+                }}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </Html>
+      )}
+
       {/* train */}
       <TrainModel />  
 
@@ -609,7 +663,7 @@ export default function GameWorld({ soundRef }) {
             roughnessMap={roughnessMap}
             aoMap={aoMap}
             blur={[400,100]} // width, height
-            resolution={1024}
+            resolution={512}
             mixBlur={0.7}
             mixStrength={80} //strength of reflection
             roughness={0.4} //hgiher roughness looks more like water than mirror
@@ -629,14 +683,12 @@ export default function GameWorld({ soundRef }) {
 
       {/* the world (floorRef) */}
       <group ref={floorRef}>
-        <WorldContent maps={{ normalMap, roughnessMap, aoMap }}/>
-
-        <group position={[LOOP_DISTANCE, -0.01,0]}>
-          <WorldContent maps={{ normalMap, roughnessMap, aoMap }}/>
+        <WorldContent wrappedDistRef={wrappedDistRef} groupOffset={0} />
+        <group position={[LOOP_DISTANCE, -0.01, 0]}>
+          <WorldContent wrappedDistRef={wrappedDistRef} groupOffset={LOOP_DISTANCE} />
         </group>
-
-        <group position={[-LOOP_DISTANCE,-0.01,0]}>
-          <WorldContent maps={{ normalMap, roughnessMap, aoMap }}/>
+        <group position={[-LOOP_DISTANCE, -0.01, 0]}>
+          <WorldContent wrappedDistRef={wrappedDistRef} groupOffset={-LOOP_DISTANCE} />
         </group>
       </group>
       
